@@ -21,7 +21,7 @@ with gr.Blocks(
 # `gradio_mediagallery`
 
 <div style="display: flex; gap: 7px;">
-<img alt="Static Badge" src="https://img.shields.io/badge/version%20-%200.0.1%20-%20orange">  
+<a href="https://pypi.org/project/gradio_mediagallery/" target="_blank"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/gradio_mediagallery"></a>  
 </div>
 
 Python library for easily interacting with trained machine learning models
@@ -46,31 +46,33 @@ from gradio_mediagallery import MediaGallery
 from gradio_mediagallery.helpers import extract_metadata, transfer_metadata
 import os
 
+# Configuration constant for the root directory containing media files
+ROOT_DIR_PATH = "./src/examples"
 
-
-# --- Configuration Constants ---
-ROOT_DIR_PATH = "./examples" # Use uma pasta com imagens com metadados para teste
-
-# --- Event Callback Function ---
-
-# Esta função é chamada quando o evento `load_metadata` é disparado do frontend.
 def handle_load_metadata(image_data: gr.EventData) -> List[Any]:
     \"\"\"
-    Processes image metadata by calling the agnostic `transfer_metadata` helper.
+    Processes image metadata by calling the `transfer_metadata` helper.
+
+    Args:
+        image_data (gr.EventData): Event data containing metadata from the MediaGallery component.
+
+    Returns:
+        List[Any]: A list of values to populate the output fields, or skipped updates if no data is provided.
     \"\"\"
     if not image_data or not hasattr(image_data, "_data"):
         return [gr.skip()] * len(output_fields)
 
-    # Call the agnostic helper function to do the heavy lifting.
     return transfer_metadata(
         output_fields=output_fields,
-        metadata=image_data._data,      
+        metadata=image_data._data,
         remove_prefix_from_keys=True
     )
 
-# --- UI Layout and Logic ---
-
+# UI layout and logic
 with gr.Blocks() as demo:
+    \"\"\"
+    A Gradio interface for browsing and displaying media files with metadata extraction.
+    \"\"\"
     gr.Markdown("# MediaGallery with Metadata Extraction")
     gr.Markdown(
         \"\"\"
@@ -91,16 +93,14 @@ with gr.Blocks() as demo:
             )
 
         with gr.Column(scale=3):
-            # Usando nosso MediaGallery customizado
             gallery = MediaGallery(
                 label="Media in Folder",
                 columns=6,
                 height="auto",
                 preview=False,
                 show_download_button=False,
-                only_custom_metadata=False, # Agora mostra todos os metadados
-                popup_metadata_width="40%",  # Popup mais largo
-                
+                only_custom_metadata=False,
+                popup_metadata_width="40%",
             )
 
     gr.Markdown("## Metadata Viewer")
@@ -110,22 +110,8 @@ with gr.Blocks() as demo:
         iso_box = gr.Textbox(label="ISOSpeedRatings")
         s_churn = gr.Slider(label="Schurn", minimum=0.0, maximum=1.0, step=0.01)
         description_box = gr.Textbox(label="Description", lines=2)
-    # --- Event Handling ---
 
-    # Evento para popular a galeria quando a pasta muda
-    folder_explorer.change(
-        fn=load_media_from_folder,
-        inputs=folder_explorer,
-        outputs=gallery
-    )
-    
-    # Evento para popular a galeria no carregamento inicial
-    demo.load(
-        fn=load_media_from_folder,
-        inputs=folder_explorer,
-        outputs=gallery
-    )
-    
+    # Event handling
     output_fields = [
         model_box,
         fnumber_box,
@@ -134,15 +120,31 @@ with gr.Blocks() as demo:
         description_box
     ]
 
-    # --- NOVO EVENTO DE METADADOS ---
-    # Liga o evento `load_metadata` do nosso MediaGallery à função de callback.
+    # Populate the gallery when the folder changes
+    folder_explorer.change(
+        fn=load_media_from_folder,
+        inputs=folder_explorer,
+        outputs=gallery
+    )
+
+    # Populate the gallery on initial load
+    demo.load(
+        fn=load_media_from_folder,
+        inputs=folder_explorer,
+        outputs=gallery
+    )
+
+    # Handle the load_metadata event from MediaGallery
     gallery.load_metadata(
         fn=handle_load_metadata,
-        inputs=None, # O dado vem do payload do evento, não de um input explícito.
+        inputs=None,
         outputs=output_fields
     )
 
 if __name__ == "__main__":
+    \"\"\"
+    Launches the Gradio interface in debug mode.
+    \"\"\"
     demo.launch(debug=True)
 ```
 """, elem_classes=["md-custom"], header_links=True)
