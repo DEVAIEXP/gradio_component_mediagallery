@@ -10,7 +10,7 @@ app_file: space.py
 ---
 
 # `gradio_mediagallery`
-<img alt="Static Badge" src="https://img.shields.io/badge/version%20-%200.0.1%20-%20blue"> <a href="https://huggingface.co/spaces/elismasilva/gradio_mediagallery"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Demo-blue"></a><p><span>💻 <a href='https://github.com/DEVAIEXP/gradio_component_mediagallery'>Component GitHub Code</a></span></p>
+<img alt="Static Badge" src="https://img.shields.io/badge/version%20-%200.0.2%20-%20blue"> <a href="https://huggingface.co/spaces/elismasilva/gradio_mediagallery"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Demo-blue"></a><p><span>💻 <a href='https://github.com/DEVAIEXP/gradio_component_mediagallery'>Component GitHub Code</a></span></p>
 
 Python library for easily interacting with trained machine learning models
 
@@ -19,7 +19,6 @@ Python library for easily interacting with trained machine learning models
 ```bash
 pip install gradio_mediagallery gradio_folderexplorer
 ```
-
 ## Usage
 
 ```python
@@ -28,8 +27,7 @@ import gradio as gr
 from gradio_folderexplorer import FolderExplorer
 from gradio_folderexplorer.helpers import load_media_from_folder
 from gradio_mediagallery import MediaGallery
-from gradio_mediagallery.helpers import extract_metadata, transfer_metadata
-import os
+from gradio_mediagallery.helpers import transfer_metadata
 
 # Configuration constant for the root directory containing media files
 ROOT_DIR_PATH = "./src/examples"
@@ -54,7 +52,7 @@ def handle_load_metadata(image_data: gr.EventData) -> List[Any]:
     )
 
 # UI layout and logic
-with gr.Blocks() as demo:
+with gr.Blocks(theme=gr.themes.Ocean()) as demo:
     """
     A Gradio interface for browsing and displaying media files with metadata extraction.
     """

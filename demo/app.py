@@ -3,8 +3,7 @@ import gradio as gr
 from gradio_folderexplorer import FolderExplorer
 from gradio_folderexplorer.helpers import load_media_from_folder
 from gradio_mediagallery import MediaGallery
-from gradio_mediagallery.helpers import extract_metadata, transfer_metadata
-import os
+from gradio_mediagallery.helpers import transfer_metadata
 
 # Configuration constant for the root directory containing media files
 ROOT_DIR_PATH = "./src/examples"
@@ -29,7 +28,7 @@ def handle_load_metadata(image_data: gr.EventData) -> List[Any]:
     )
 
 # UI layout and logic
-with gr.Blocks() as demo:
+with gr.Blocks(theme=gr.themes.Ocean()) as demo:
     """
     A Gradio interface for browsing and displaying media files with metadata extraction.
     """

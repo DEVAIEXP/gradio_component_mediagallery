@@ -650,27 +650,8 @@
   </div>
 {/if}
 
-<style lang="postcss">
-  /**
-   * Styles for the gallery container, which holds the entire component.
-   */
-  .gallery-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-  }
-
-  /**
-   * Styles for buttons to ensure they fill their container.
-   */
-  button {
-    width: var(--size-full);
-    height: var(--size-full);
-    display: block;
-    border-radius: var(--radius-lg);
-  }
-
-  /**
+<style>
+    /**
    * Styles for the preview mode, displaying a selected media item.
    */
   .preview {
@@ -1074,7 +1055,7 @@
   .load-metadata-button {
     margin-top: 1rem;
     padding: 0.5rem 1rem;
-    background-color: var(--button-primary-background-fill);
+    background-color: var(--button-primary-border-color);
     color: var(--button-primary-text-color);
     border: none;
     border-radius: 4px;
@@ -1094,6 +1075,5 @@
     justify-content: center;
     color: var(--body-text-color-subdued);
   }
-
 
 </style>
