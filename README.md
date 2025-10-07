@@ -10,7 +10,7 @@ app_file: space.py
 ---
 
 # `gradio_mediagallery`
-<img alt="Static Badge" src="https://img.shields.io/badge/version%20-%200.0.2%20-%20blue"> <a href="https://huggingface.co/spaces/elismasilva/gradio_mediagallery"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Demo-blue"></a><p><span>💻 <a href='https://github.com/DEVAIEXP/gradio_component_mediagallery'>Component GitHub Code</a></span></p>
+<img alt="Static Badge" src="https://img.shields.io/badge/version%20-%200.0.3%20-%20blue"> <a href="https://huggingface.co/spaces/elismasilva/gradio_mediagallery"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Demo-blue"></a><p><span>💻 <a href='https://github.com/DEVAIEXP/gradio_component_mediagallery'>Component GitHub Code</a></span></p>
 
 Python library for easily interacting with trained machine learning models
 
@@ -19,6 +19,7 @@ Python library for easily interacting with trained machine learning models
 ```bash
 pip install gradio_mediagallery gradio_folderexplorer
 ```
+
 ## Usage
 
 ```python
@@ -159,7 +160,7 @@ Sequence[
 
 </td>
 <td align="left"><code>None</code></td>
-<td align="left">List of images or videos to display in the gallery by default. If a function is provided, the function will be called each time the app loads to set the initial value of this component.</td>
+<td align="left">Initial list of images or videos, or a function to generate them.</td>
 </tr>
 
 <tr>
@@ -172,7 +173,7 @@ list[str] | None
 
 </td>
 <td align="left"><code>None</code></td>
-<td align="left">List of file extensions or types of files to be uploaded (e.g. ['image', '.mp4']), when this is used as an input component. "image" allows only image files to be uploaded, "video" allows only video files to be uploaded, ".mp4" allows only mp4 files to be uploaded, etc. If None, any image and video files types are allowed.</td>
+<td align="left">List of allowed file extensions or types for uploads (e.g., ['image', '.mp4']).</td>
 </tr>
 
 <tr>
@@ -185,7 +186,7 @@ str | I18nData | None
 
 </td>
 <td align="left"><code>None</code></td>
-<td align="left">the label for this component. Appears above the component and is also used as the header if there are a table of examples for this component. If None and used in a `gr.Interface`, the label will be the name of the parameter this component is assigned to.</td>
+<td align="left">Label displayed above the component.</td>
 </tr>
 
 <tr>
@@ -198,7 +199,7 @@ Timer | float | None
 
 </td>
 <td align="left"><code>None</code></td>
-<td align="left">Continously calls `value` to recalculate it if `value` is a function (has no effect otherwise). Can provide a Timer whose tick resets `value`, or a float that provides the regular interval for the reset Timer.</td>
+<td align="left">Interval or Timer to refresh `value` if it's a function.</td>
 </tr>
 
 <tr>
@@ -211,7 +212,7 @@ Component | Sequence[Component] | set[Component] | None
 
 </td>
 <td align="left"><code>None</code></td>
-<td align="left">Components that are used as inputs to calculate `value` if `value` is a function (has no effect otherwise). `value` is recalculated any time the inputs change.</td>
+<td align="left">Components used as inputs to recalculate `value` if it's a function.</td>
 </tr>
 
 <tr>
@@ -224,7 +225,7 @@ bool | None
 
 </td>
 <td align="left"><code>None</code></td>
-<td align="left">if True, will display label.</td>
+<td align="left">Whether to display the label.</td>
 </tr>
 
 <tr>
@@ -237,7 +238,7 @@ bool
 
 </td>
 <td align="left"><code>True</code></td>
-<td align="left">If True, will place the component in a container - providing some extra padding around the border.</td>
+<td align="left">Whether to place the component in a padded container.</td>
 </tr>
 
 <tr>
@@ -250,7 +251,7 @@ int | None
 
 </td>
 <td align="left"><code>None</code></td>
-<td align="left">relative size compared to adjacent Components. For example if Components A and B are in a Row, and A has scale=2, and B has scale=1, A will be twice as wide as B. Should be an integer. scale applies in Rows, and to top-level Components in Blocks where fill_height=True.</td>
+<td align="left">Relative size compared to adjacent components.</td>
 </tr>
 
 <tr>
@@ -263,7 +264,7 @@ int
 
 </td>
 <td align="left"><code>160</code></td>
-<td align="left">minimum pixel width, will wrap if not sufficient screen space to satisfy this value. If a certain scale value results in this Component being narrower than min_width, the min_width parameter will be respected first.</td>
+<td align="left">Minimum pixel width of the component.</td>
 </tr>
 
 <tr>
@@ -276,7 +277,7 @@ bool | Literal["hidden"]
 
 </td>
 <td align="left"><code>True</code></td>
-<td align="left">If False, component will be hidden. If "hidden", component will be visually hidden and not take up space in the layout but still exist in the DOM</td>
+<td align="left">Whether the component is visible or hidden.</td>
 </tr>
 
 <tr>
@@ -289,7 +290,7 @@ str | None
 
 </td>
 <td align="left"><code>None</code></td>
-<td align="left">An optional string that is assigned as the id of this component in the HTML DOM. Can be used for targeting CSS styles.</td>
+<td align="left">HTML ID for the component.</td>
 </tr>
 
 <tr>
@@ -302,7 +303,7 @@ list[str] | str | None
 
 </td>
 <td align="left"><code>None</code></td>
-<td align="left">An optional list of strings that are assigned as the classes of this component in the HTML DOM. Can be used for targeting CSS styles.</td>
+<td align="left">HTML classes for the component.</td>
 </tr>
 
 <tr>
@@ -315,7 +316,7 @@ bool
 
 </td>
 <td align="left"><code>True</code></td>
-<td align="left">If False, component will not render be rendered in the Blocks context. Should be used if the intention is to assign event listeners now but render the component later.</td>
+<td align="left">Whether to render the component in the Blocks context.</td>
 </tr>
 
 <tr>
@@ -328,7 +329,7 @@ int | str | tuple[int | str, ...] | None
 
 </td>
 <td align="left"><code>None</code></td>
-<td align="left">in a gr.render, Components with the same key across re-renders are treated as the same component, not a new component. Properties set in 'preserved_by_key' are not reset across a re-render.</td>
+<td align="left">Identifier for preserving component state across re-renders.</td>
 </tr>
 
 <tr>
@@ -341,7 +342,7 @@ list[str] | str | None
 
 </td>
 <td align="left"><code>"value"</code></td>
-<td align="left">A list of parameters from this component's constructor. Inside a gr.render() function, if a component is re-rendered with the same key, these (and only these) parameters will be preserved in the UI (if they have been changed by the user or an event listener) instead of re-rendered based on the values provided during constructor.</td>
+<td align="left">Parameters to preserve during re-renders.</td>
 </tr>
 
 <tr>
@@ -354,7 +355,7 @@ int | None
 
 </td>
 <td align="left"><code>2</code></td>
-<td align="left">Represents the number of images that should be shown in one row.</td>
+<td align="left">Number of columns in the grid.</td>
 </tr>
 
 <tr>
@@ -367,7 +368,7 @@ int | None
 
 </td>
 <td align="left"><code>None</code></td>
-<td align="left">Represents the number of rows in the image grid.</td>
+<td align="left">Number of rows in the grid.</td>
 </tr>
 
 <tr>
@@ -380,7 +381,7 @@ int | float | str | None
 
 </td>
 <td align="left"><code>None</code></td>
-<td align="left">The height of the gallery component, specified in pixels if a number is passed, or in CSS units if a string is passed. If more images are displayed than can fit in the height, a scrollbar will appear.</td>
+<td align="left">Height of the gallery in pixels or CSS units.</td>
 </tr>
 
 <tr>
@@ -393,7 +394,7 @@ bool
 
 </td>
 <td align="left"><code>True</code></td>
-<td align="left">If True, images in the gallery will be enlarged when they are clicked. Default is True.</td>
+<td align="left">Whether images can be enlarged on click.</td>
 </tr>
 
 <tr>
@@ -406,7 +407,7 @@ bool | None
 
 </td>
 <td align="left"><code>None</code></td>
-<td align="left">If True, MediaGallery will start in preview mode, which shows all of the images as thumbnails and allows the user to click on them to view them in full size. Only works if allow_preview is True.</td>
+<td align="left">Whether to start in preview mode (requires allow_preview=True).</td>
 </tr>
 
 <tr>
@@ -419,7 +420,7 @@ int | None
 
 </td>
 <td align="left"><code>None</code></td>
-<td align="left">The index of the image that should be initially selected. If None, no image will be selected at start. If provided, will set MediaGallery to preview mode unless allow_preview is set to False.</td>
+<td align="left">Index of the initially selected media item.</td>
 </tr>
 
 <tr>
@@ -435,7 +436,7 @@ Literal[
 
 </td>
 <td align="left"><code>None</code></td>
-<td align="left">CSS object-fit property for the thumbnail images in the gallery. Can be "contain", "cover", "fill", "none", or "scale-down".</td>
+<td align="left">CSS object-fit for thumbnails ("contain", "cover", etc.).</td>
 </tr>
 
 <tr>
@@ -448,7 +449,7 @@ bool | None
 
 </td>
 <td align="left"><code>None</code></td>
-<td align="left">If True, will show a share icon in the corner of the component that allows user to share outputs to Hugging Face Spaces Discussions. If False, icon does not appear. If set to None (default behavior), then the icon appears if this Gradio app is launched on Spaces, but not otherwise.</td>
+<td align="left">Whether to show a share button (auto-enabled on Hugging Face Spaces).</td>
 </tr>
 
 <tr>
@@ -461,7 +462,7 @@ bool | None
 
 </td>
 <td align="left"><code>True</code></td>
-<td align="left">If True, will show a download button in the corner of the selected image. If False, the icon does not appear. Default is True.</td>
+<td align="left">Whether to show a download button for the selected media.</td>
 </tr>
 
 <tr>
@@ -474,7 +475,7 @@ bool | None
 
 </td>
 <td align="left"><code>None</code></td>
-<td align="left">If True, the gallery will be interactive, allowing the user to upload images. If False, the gallery will be static. Default is True.</td>
+<td align="left">Whether the gallery allows uploads.</td>
 </tr>
 
 <tr>
@@ -487,7 +488,7 @@ Literal["numpy", "pil", "filepath"]
 
 </td>
 <td align="left"><code>"filepath"</code></td>
-<td align="left">The format the image is converted to before being passed into the prediction function. "numpy" converts the image to a numpy array with shape (height, width, 3) and values from 0 to 255, "pil" converts the image to a PIL image object, "filepath" passes a str path to a temporary file containing the image. If the image is SVG, the `type` is ignored and the filepath of the SVG is returned.</td>
+<td align="left">Format for images passed to the prediction function ("numpy", "pil", "filepath").</td>
 </tr>
 
 <tr>
@@ -500,7 +501,7 @@ bool
 
 </td>
 <td align="left"><code>True</code></td>
-<td align="left">If True, will show a fullscreen icon in the corner of the component that allows user to view the gallery in fullscreen mode. If False, icon does not appear. If set to None (default behavior), then the icon appears if this Gradio app is launched on Spaces, but not otherwise.</td>
+<td align="left">Whether to show a fullscreen button.</td>
 </tr>
 
 <tr>
@@ -513,7 +514,7 @@ bool
 
 </td>
 <td align="left"><code>True</code></td>
-<td align="left">If True, the metadata popup will filter out common technical EXIF data (like ImageWidth, ColorType, etc.), showing only custom or descriptive metadata.</td>
+<td align="left">Whether to filter out technical EXIF metadata in the popup.</td>
 </tr>
 
 <tr>
@@ -526,7 +527,7 @@ int | str
 
 </td>
 <td align="left"><code>500</code></td>
-<td align="left">The width of the metadata popup modal, specified in pixels (e.g., 500) or as a CSS string (e.g., "50%").</td>
+<td align="left">Width of the metadata popup (pixels or CSS string).</td>
 </tr>
 </tbody></table>
 
@@ -538,9 +539,9 @@ int | str
 | `select` | Event listener for when the user selects or deselects the MediaGallery. Uses event data gradio.SelectData to carry `value` referring to the label of the MediaGallery, and `selected` to refer to state of the MediaGallery. See EventData documentation on how to use this event data |
 | `change` | Triggered when the value of the MediaGallery changes either because of user input (e.g. a user types in a textbox) OR because of a function update (e.g. an image receives a value from the output of an event trigger). See `.input()` for a listener that is only triggered by user input. |
 | `delete` | This listener is triggered when the user deletes and item from the MediaGallery. Uses event data gradio.DeletedFileData to carry `value` referring to the file that was deleted as an instance of FileData. See EventData documentation on how to use this event data |
-| `preview_close` | This event is triggered when the MediaGallery preview is closed by the user |
-| `preview_open` | This event is triggered when the MediaGallery preview is opened by the user |
-| `load_metadata` | Triggered when the user clicks the 'Load Metadata' button in the metadata popup. The event data will be a dictionary containing the image metadata. |
+| `preview_close` | Triggered when the MediaGallery preview is closed by the user. |
+| `preview_open` | Triggered when the MediaGallery preview is opened by the user. |
+| `load_metadata` | Triggered when the user clicks the 'Load Metadata' button in the metadata popup. Returns a dictionary of image metadata. |
 
 
 
@@ -553,8 +554,8 @@ The impact on the users predict function varies depending on whether the compone
 
 The code snippet below is accurate in cases where the component is used as both an input and an output.
 
-- **As output:** Is passed, the preprocessed input data sent to the user's function in the backend.
-- **As input:** Should return, the output data received by the component from the user's function in the backend.
+- **As output:** Is passed, list of tuples containing file paths and captions, or None if payload is None.
+- **As input:** Should return, list of media items (images, videos, or tuples with captions).
 
  ```python
  def predict(

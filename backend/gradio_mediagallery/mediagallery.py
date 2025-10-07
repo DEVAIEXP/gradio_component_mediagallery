@@ -1,16 +1,8 @@
-"""gr.Gallery() component."""
-
 from __future__ import annotations
 from collections.abc import Sequence
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Callable,
-    Literal,
-    Union,
-)
+from typing import TYPE_CHECKING, Any, Callable, Literal, Union
 from urllib.parse import urlparse
 import PIL.Image
 import numpy as np
@@ -19,49 +11,50 @@ from gradio_client.utils import is_http_url_like
 from gradio import processing_utils, utils
 from gradio.components.base import Component
 from gradio.data_classes import FileData, GradioModel, GradioRootModel, ImageData
-from gradio.events import EventListener, Events # Remova EventListener se não for usado
-# Remova todas as importações e classes relacionadas à árvore (TreeNode, JsonData, etc.)
-
+from gradio.events import Events, EventListener
 from gradio.i18n import I18nData
 
 if TYPE_CHECKING:
     from gradio.components import Timer
-# --- DEFINIÇÕES DE MODELO SIMPLIFICADAS ---
 
 class GalleryImage(GradioModel):
+    """Data model for a gallery image."""
     image: ImageData
     caption: str | None = None
 
 class GalleryVideo(GradioModel):
+    """Data model for a gallery video."""
     video: FileData
     caption: str | None = None
 
-class GalleryData(GradioRootModel): # Voltamos a usar GradioRootModel
+class GalleryData(GradioRootModel):
+    """Root data model for gallery items, containing a list of images or videos."""
     root: list[Union[GalleryImage, GalleryVideo]]
 
 class MediaGallery(Component):
     """
-    Creates a gallery component that allows displaying a grid of images or videos, and optionally captions. If used as an input, the user can upload images or videos to the gallery.
-    If used as an output, the user can click on individual images or videos to view them at a higher resolution.
+    A Gradio component for displaying a grid of images or videos with optional captions.
+    Supports preview mode for enlarged viewing and metadata extraction for images.
+    Can be used as an input for uploading media or as an output for displaying media.
 
     Demos: fake_gan, gif_maker
     """
 
     EVENTS = [
-        Events.select,      
+        Events.select,
         Events.change,
         Events.delete,
         EventListener(
             "preview_close",
-            doc="This event is triggered when the MediaGallery preview is closed by the user",
+            doc="Triggered when the MediaGallery preview is closed by the user."
         ),
         EventListener(
             "preview_open",
-            doc="This event is triggered when the MediaGallery preview is opened by the user",
+            doc="Triggered when the MediaGallery preview is opened by the user."
         ),
         EventListener(
             "load_metadata",
-            doc="Triggered when the user clicks the 'Load Metadata' button in the metadata popup. The event data will be a dictionary containing the image metadata.",
+            doc="Triggered when the user clicks the 'Load Metadata' button in the metadata popup. Returns a dictionary of image metadata."
         ),
     ]
 
@@ -74,7 +67,7 @@ class MediaGallery(Component):
             | Callable
             | None
         ) = None,
-        *,       
+        *,
         file_types: list[str] | None = None,
         label: str | I18nData | None = None,
         every: Timer | float | None = None,
@@ -104,41 +97,42 @@ class MediaGallery(Component):
         type: Literal["numpy", "pil", "filepath"] = "filepath",
         show_fullscreen_button: bool = True,
         only_custom_metadata: bool = True,
-        popup_metadata_width: int | str = 500        
+        popup_metadata_width: int | str = 500
     ):
         """
-        Parameters:
-            value: List of images or videos to display in the gallery by default. If a function is provided, the function will be called each time the app loads to set the initial value of this component.
-            format: Format to save images before they are returned to the frontend, such as 'jpeg' or 'png'. This parameter only applies to images that are returned from the prediction function as numpy arrays or PIL Images. The format should be supported by the PIL library.
-            file_types: List of file extensions or types of files to be uploaded (e.g. ['image', '.mp4']), when this is used as an input component. "image" allows only image files to be uploaded, "video" allows only video files to be uploaded, ".mp4" allows only mp4 files to be uploaded, etc. If None, any image and video files types are allowed.
-            label: the label for this component. Appears above the component and is also used as the header if there are a table of examples for this component. If None and used in a `gr.Interface`, the label will be the name of the parameter this component is assigned to.
-            every: Continously calls `value` to recalculate it if `value` is a function (has no effect otherwise). Can provide a Timer whose tick resets `value`, or a float that provides the regular interval for the reset Timer.
-            inputs: Components that are used as inputs to calculate `value` if `value` is a function (has no effect otherwise). `value` is recalculated any time the inputs change.
-            show_label: if True, will display label.
-            container: If True, will place the component in a container - providing some extra padding around the border.
-            scale: relative size compared to adjacent Components. For example if Components A and B are in a Row, and A has scale=2, and B has scale=1, A will be twice as wide as B. Should be an integer. scale applies in Rows, and to top-level Components in Blocks where fill_height=True.
-            min_width: minimum pixel width, will wrap if not sufficient screen space to satisfy this value. If a certain scale value results in this Component being narrower than min_width, the min_width parameter will be respected first.
-            visible: If False, component will be hidden. If "hidden", component will be visually hidden and not take up space in the layout but still exist in the DOM
-            elem_id: An optional string that is assigned as the id of this component in the HTML DOM. Can be used for targeting CSS styles.
-            elem_classes: An optional list of strings that are assigned as the classes of this component in the HTML DOM. Can be used for targeting CSS styles.
-            render: If False, component will not render be rendered in the Blocks context. Should be used if the intention is to assign event listeners now but render the component later.
-            key: in a gr.render, Components with the same key across re-renders are treated as the same component, not a new component. Properties set in 'preserved_by_key' are not reset across a re-render.
-            preserved_by_key: A list of parameters from this component's constructor. Inside a gr.render() function, if a component is re-rendered with the same key, these (and only these) parameters will be preserved in the UI (if they have been changed by the user or an event listener) instead of re-rendered based on the values provided during constructor.
-            columns: Represents the number of images that should be shown in one row.
-            rows: Represents the number of rows in the image grid.
-            height: The height of the gallery component, specified in pixels if a number is passed, or in CSS units if a string is passed. If more images are displayed than can fit in the height, a scrollbar will appear.
-            allow_preview: If True, images in the gallery will be enlarged when they are clicked. Default is True.
-            preview: If True, MediaGallery will start in preview mode, which shows all of the images as thumbnails and allows the user to click on them to view them in full size. Only works if allow_preview is True.
-            selected_index: The index of the image that should be initially selected. If None, no image will be selected at start. If provided, will set MediaGallery to preview mode unless allow_preview is set to False.
-            object_fit: CSS object-fit property for the thumbnail images in the gallery. Can be "contain", "cover", "fill", "none", or "scale-down".
-            show_share_button: If True, will show a share icon in the corner of the component that allows user to share outputs to Hugging Face Spaces Discussions. If False, icon does not appear. If set to None (default behavior), then the icon appears if this Gradio app is launched on Spaces, but not otherwise.
-            show_download_button: If True, will show a download button in the corner of the selected image. If False, the icon does not appear. Default is True.
-            interactive: If True, the gallery will be interactive, allowing the user to upload images. If False, the gallery will be static. Default is True.
-            type: The format the image is converted to before being passed into the prediction function. "numpy" converts the image to a numpy array with shape (height, width, 3) and values from 0 to 255, "pil" converts the image to a PIL image object, "filepath" passes a str path to a temporary file containing the image. If the image is SVG, the `type` is ignored and the filepath of the SVG is returned.
-            show_fullscreen_button: If True, will show a fullscreen icon in the corner of the component that allows user to view the gallery in fullscreen mode. If False, icon does not appear. If set to None (default behavior), then the icon appears if this Gradio app is launched on Spaces, but not otherwise.
-            only_custom_metadata: If True, the metadata popup will filter out common technical EXIF data (like ImageWidth, ColorType, etc.), showing only custom or descriptive metadata.
-            popup_metadata_width: The width of the metadata popup modal, specified in pixels (e.g., 500) or as a CSS string (e.g., "50%").           
-        """     
+        Initializes the MediaGallery component.
+
+        Args:
+            value: Initial list of images or videos, or a function to generate them.
+            file_types: List of allowed file extensions or types for uploads (e.g., ['image', '.mp4']).
+            label: Label displayed above the component.
+            every: Interval or Timer to refresh `value` if it's a function.
+            inputs: Components used as inputs to recalculate `value` if it's a function.
+            show_label: Whether to display the label.
+            container: Whether to place the component in a padded container.
+            scale: Relative size compared to adjacent components.
+            min_width: Minimum pixel width of the component.
+            visible: Whether the component is visible or hidden.
+            elem_id: HTML ID for the component.
+            elem_classes: HTML classes for the component.
+            render: Whether to render the component in the Blocks context.
+            key: Identifier for preserving component state across re-renders.
+            preserved_by_key: Parameters to preserve during re-renders.
+            columns: Number of columns in the grid.
+            rows: Number of rows in the grid.
+            height: Height of the gallery in pixels or CSS units.
+            allow_preview: Whether images can be enlarged on click.
+            preview: Whether to start in preview mode (requires allow_preview=True).
+            selected_index: Index of the initially selected media item.
+            object_fit: CSS object-fit for thumbnails ("contain", "cover", etc.).
+            show_share_button: Whether to show a share button (auto-enabled on Hugging Face Spaces).
+            show_download_button: Whether to show a download button for the selected media.
+            interactive: Whether the gallery allows uploads.
+            type: Format for images passed to the prediction function ("numpy", "pil", "filepath").
+            show_fullscreen_button: Whether to show a fullscreen button.
+            only_custom_metadata: Whether to filter out technical EXIF metadata in the popup.
+            popup_metadata_width: Width of the metadata popup (pixels or CSS string).
+        """
         self.columns = columns
         self.rows = rows
         self.height = height
@@ -158,10 +152,8 @@ class MediaGallery(Component):
         self.type = type
         self.show_fullscreen_button = show_fullscreen_button
         self.file_types = file_types
-
         self.only_custom_metadata = only_custom_metadata
         self.popup_metadata_width = popup_metadata_width
-                
         self.show_share_button = (
             (utils.get_space() is not None)
             if show_share_button is None
@@ -186,19 +178,33 @@ class MediaGallery(Component):
         )
         self._value_description = f"a list of {'string filepaths' if type == 'filepath' else 'numpy arrays' if type == 'numpy' else 'PIL images'}"
 
-    def preprocess(self, payload: GalleryData  | None) -> Any:
+    def preprocess(self, payload: GalleryData | None) -> Any:
+        """
+        Preprocesses the gallery data for use in a prediction function.
+
+        Args:
+            payload: Gallery data containing images or videos.
+
+        Returns:
+            List of tuples containing file paths and captions, or None if payload is None.
+        """
         if payload is None:
             return None
         return [
             (item.video.path if isinstance(item, GalleryVideo) else item.image.path, item.caption)
             for item in payload.root
-        ] # Extrai os dados do wrapper
+        ]
 
-    def postprocess(
-        self,
-        value: list | None,
-    ) -> GalleryData: # Assinatura está correta: retorna um dicionário
-        
+    def postprocess(self, value: list | None) -> GalleryData:
+        """
+        Postprocesses input media to create a GalleryData object for display.
+
+        Args:
+            value: List of media items (images, videos, or tuples with captions).
+
+        Returns:
+            GalleryData object containing processed media items.
+        """
         if value is None:
             return GalleryData(root=[])
         
@@ -211,13 +217,8 @@ class MediaGallery(Component):
 
         def _save_item(item):
             img, caption = (item, None) if not isinstance(item, (tuple, list)) else item
+            orig_name = Path(img.filename).name if hasattr(img, 'filename') and img.filename else None
 
-            # Lógica para extrair nome original (importante para nossa UI)
-            orig_name = None
-            if hasattr(img, 'filename') and img.filename:
-                orig_name = Path(img.filename).name
-
-            # Lógica de salvar no cache e preparar dados
             if isinstance(img, np.ndarray):
                 file = processing_utils.save_img_array_to_cache(img, cache_dir=self.GRADIO_CACHE, format="png")
                 file_path = str(utils.abspath(file))
@@ -258,6 +259,16 @@ class MediaGallery(Component):
 
     @staticmethod
     def convert_to_type(img: str, type: Literal["filepath", "numpy", "pil"]):
+        """
+        Converts an image to the specified format.
+
+        Args:
+            img: Path to the image file.
+            type: Target format ("filepath", "numpy", or "pil").
+
+        Returns:
+            Image in the specified format.
+        """
         if type == "filepath":
             return img
         else:
@@ -267,6 +278,12 @@ class MediaGallery(Component):
             return converted_image
 
     def example_payload(self) -> Any:
+        """
+        Provides an example payload for the gallery.
+
+        Returns:
+            List containing a sample image dictionary.
+        """
         return [
             {
                 "image": handle_file(
@@ -276,6 +293,12 @@ class MediaGallery(Component):
         ]
 
     def example_value(self) -> Any:
+        """
+        Provides an example value for the gallery.
+
+        Returns:
+            List containing a sample image URL.
+        """
         return [
             "https://raw.githubusercontent.com/gradio-app/gradio/main/test/test_files/bus.png"
         ]
