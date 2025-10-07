@@ -651,6 +651,16 @@
 {/if}
 
 <style>
+
+   /**
+   * Styles for the gallery container, which holds the entire component.
+   */
+  .gallery-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  
     /**
    * Styles for the preview mode, displaying a selected media item.
    */
