@@ -9,7 +9,7 @@ abs_path = os.path.join(os.path.dirname(__file__), "css.css")
 
 with gr.Blocks(
     css=abs_path,
-    theme=gr.themes.Ocean(
+    theme=gr.themes.Default(
         font_mono=[
             gr.themes.GoogleFont("Inconsolata"),
             "monospace",
@@ -64,7 +64,7 @@ def handle_load_metadata(image_data: gr.EventData) -> List[Any]:
     return transfer_metadata(
         output_fields=output_fields,
         metadata=image_data._data,
-        remove_prefix_from_keys=True
+        remove_prefix_from_keys=False
     )
 
 # UI layout and logic

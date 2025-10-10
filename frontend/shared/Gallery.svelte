@@ -1035,7 +1035,7 @@
   }
 
   .load-metadata-button:hover {
-    background-color: var(--button-primary-background-fill-hover);
+    background-color: var(--button-primary-border-color);
   }
 
   .no-metadata-message {

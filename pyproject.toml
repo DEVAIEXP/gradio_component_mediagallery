@@ -8,7 +8,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "gradio_mediagallery"
-version = "0.0.5"
+version = "0.0.6"
 description = "Python library for easily interacting with trained machine learning models"
 readme = "README.md"
 license = "Apache-2.0"
@@ -48,7 +48,7 @@ classifiers = [
 dev = ["build", "twine"]
 
 [tool.hatch.build]
-artifacts = ["/backend/gradio_mediagallery/templates", "*.pyi", "/\\backend\\gradio_mediagallery\\templates"]
+artifacts = ["/backend/gradio_mediagallery/templates", "*.pyi", "/\\backend\\gradio_mediagallery\\templates", "/F:\\projetos\\DEVAIEXP\\gradio-components\\venv2\\lib\\site-packages\\gradio_mediagallery\\templates"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["/backend/gradio_mediagallery"]
