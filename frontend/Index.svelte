@@ -69,6 +69,8 @@
     export let show_share_button = false;
     /** @prop {boolean} fullscreen - Whether the gallery is in fullscreen mode. Defaults to false. */
     export let fullscreen = false;
+    /** @prop {boolean} only_custom_metadata - Whether to show only custom metadata in the popup. Defaults to true. */
+    export let only_custom_metadata: boolean = true; 
     /** @prop {number | string} popup_metadata_width - Width of the metadata popup. Defaults to "50%". */
     export let popup_metadata_width: number | string = "50%";
 </script>
@@ -121,6 +123,7 @@
             {show_share_button}
             {fullscreen}
             {popup_metadata_width}
+            {only_custom_metadata}
         />
     {/if}
 </Block>

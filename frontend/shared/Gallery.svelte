@@ -16,10 +16,9 @@
   import type { GalleryImage, GalleryVideo } from "../types";
   import { Download, Image as ImageIcon, Clear, Play, Info } from "@gradio/icons";
   import { FileData } from "@gradio/client";
-  import { format_gallery_for_sharing } from "./utils";
+  import { format_gallery_for_sharing, extractMetadata, extensiveTechnicalMetadata } from "./utils";
   import type { I18nFormatter } from "@gradio/utils";
-  import * as exifr from "exifr";
-
+  
   type GalleryData = GalleryImage | GalleryVideo;
 
   /**
@@ -93,62 +92,21 @@
   let el: HTMLButtonElement[] = [];
   let container_element: HTMLDivElement;
   let thumbnails_overflow = false;
-  let preview_element: HTMLDivElement | null = null;
+  let preview_element: HTMLButtonElement | null = null;
 
   // Metadata state
   let metadata: Record<string, any> | null = null;
   let showMetadataPopup: boolean = false;
   let is_extracting_metadata = false;
-  const technicalMetadata: string[] = [
-    "ImageWidth",
-    "ImageHeight",
-    "BitDepth",
-    "ColorType",
-    "Compression",
-    "Filter",
-    "Interlace",
-  ];
+  
 
   $: filteredMetadata = only_custom_metadata && metadata
     ? Object.fromEntries(
-        Object.entries(metadata).filter(([key]) => !technicalMetadata.includes(key))
+        Object.entries(metadata || {}).filter(([key]) => !extensiveTechnicalMetadata.has(key))
       )
     : metadata;
 
-  /**
-   * Extracts metadata from an image file using the exifr library.
-   * @param fileData - The file data containing the image URL.
-   * @returns A promise resolving to the extracted metadata or null if extraction fails or is not applicable.
-   */
-  async function extractMetadata(fileData: FileData): Promise<Record<string, any> | null> {
-    if (!fileData?.url) return null;
-    if (
-      fileData.url.toLowerCase().endsWith(".png") ||
-      fileData.url.toLowerCase().endsWith(".jpg") ||
-      fileData.url.toLowerCase().endsWith(".jpeg")
-    ) {
-      try {
-        const data = await exifr.parse(fileData.url, true);
-        let parsed_meta: Record<string, any> = {};
-        if (data) {
-          for (const [key, value] of Object.entries(data)) {
-            if (
-              typeof value === "string" ||
-              typeof value === "number" ||
-              typeof value === "boolean"
-            ) {
-              parsed_meta[key] = value;
-            }
-          }
-        }
-        return parsed_meta;
-      } catch (error) {
-        return {};
-      }
-    }
-    return null;
-  }
-
+  
   /**
    * Toggles the metadata popup visibility and extracts metadata if needed.
    */
@@ -161,7 +119,7 @@
     const media_file = "image" in selected_media ? selected_media.image : null;
     if (!media_file) return;
     is_extracting_metadata = true;
-    metadata = await extractMetadata(media_file);
+    metadata = await extractMetadata(media_file, only_custom_metadata);
     is_extracting_metadata = false;
     showMetadataPopup = true;
   }
@@ -380,7 +338,7 @@
         tabindex="-1"
         on:keydown={on_keydown}
       >
-        <IconButtonWrapper {display_icon_button_wrapper_top_corner}>
+        <IconButtonWrapper display_top_corner={display_icon_button_wrapper_top_corner}>
           {#if show_download_button}
             <IconButton
               Icon={Download}
@@ -457,6 +415,8 @@
               alt={selected_media.caption || ""}
               loading="lazy"
               controls={true}
+              loop={false}
+              is_stream={false}
             />
           {/if}
       </button>
@@ -550,8 +510,8 @@
       {#if resolved_value && resolved_value.length > 1}
         <div
           class="grid-container"
-          style:--grid-cols={effective_columns}
-          style:--grid-rows={rows}
+          style:--grid-cols={Array.isArray(effective_columns) ? effective_columns.join(" ") : effective_columns}
+          style:--grid-rows={Array.isArray(rows) ? rows.join(" ") : rows}
           style:--object-fit={object_fit}
           class:pt-6={show_label}
         >
@@ -1051,7 +1011,7 @@
     font-weight: bold;
     text-align: left;
     vertical-align: top;
-    width: 35%;
+    width: 45%;
   }
 
   .metadata-value {

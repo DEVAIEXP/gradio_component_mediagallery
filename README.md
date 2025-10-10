@@ -1,16 +1,16 @@
 ---
 tags: [gradio-custom-component, gallery]
 title: gradio_mediagallery
-short_description: A gradio custom component
-colorFrom: blue
-colorTo: yellow
+short_description: A Media Gallery Explorer for Gradio UI
+colorFrom: pink
+colorTo: green
 sdk: gradio
 pinned: false
 app_file: space.py
 ---
 
 # `gradio_mediagallery`
-<img alt="Static Badge" src="https://img.shields.io/badge/version%20-%200.0.4%20-%20blue"> <a href="https://huggingface.co/spaces/elismasilva/gradio_mediagallery"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Demo-blue"></a><p><span>💻 <a href='https://github.com/DEVAIEXP/gradio_component_mediagallery'>Component GitHub Code</a></span></p>
+<img alt="Static Badge" src="https://img.shields.io/badge/version%20-%200.0.5%20-%20blue"> <a href="https://huggingface.co/spaces/elismasilva/gradio_mediagallery"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Demo-blue"></a><p><span>💻 <a href='https://github.com/DEVAIEXP/gradio_component_mediagallery'>Component GitHub Code</a></span></p>
 
 Python library for easily interacting with trained machine learning models
 

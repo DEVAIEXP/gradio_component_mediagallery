@@ -32,7 +32,7 @@ Python library for easily interacting with trained machine learning models
 ## Installation
 
 ```bash
-pip install gradio_mediagallery gradio_folderexplorer
+pip install gradio_mediagallery
 ```
 
 ## Usage

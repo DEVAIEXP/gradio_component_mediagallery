@@ -8,7 +8,11 @@
 		"skipLibCheck": true,
 		"sourceMap": true,
 		"strict": true,
-		"verbatimModuleSyntax": true
+		"verbatimModuleSyntax": true,
+		"module": "ESNext",		
+    	"moduleResolution": "bundler",
+		"target": "es2022",
+    	"lib": ["es2022", "dom"], 
 	},
 	"exclude": ["node_modules", "dist", "./gradio.config.js"]
 }

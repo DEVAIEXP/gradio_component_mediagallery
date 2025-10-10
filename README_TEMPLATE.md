@@ -1,9 +1,9 @@
 ---
 tags: [gradio-custom-component, gallery]
 title: gradio_mediagallery
-short_description: A gradio custom component
-colorFrom: blue
-colorTo: yellow
+short_description: A Media Gallery Explorer for Gradio UI
+colorFrom: pink
+colorTo: green
 sdk: gradio
 pinned: false
 app_file: space.py
